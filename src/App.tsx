@@ -195,7 +195,7 @@ function App() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#f3f4f6",
+            background: "var(--bg)",
           }}
         >
           <p>Memuat bill transaksi...</p>
@@ -213,7 +213,7 @@ function App() {
             alignItems: "center",
             justifyContent: "center",
             gap: "16px",
-            background: "#f3f4f6",
+            background: "var(--bg)",
           }}
         >
           <h2>Gagal memuat bill</h2>

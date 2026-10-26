@@ -1,14 +1,24 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "./Home.css";
+import Footer from "../components/Footer";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Product {
   id: number;
   category_id: number;
   category_name: string;
   product_name: string;
+  sku?: string | null;
+  barcode?: string | null;
   image: string | null;
   price: string;
   stock: number;
+  min_stock?: number | null;
   status: number;
   created_at: string;
   created_by: number;
@@ -32,6 +42,8 @@ function Home({ onPay, onHistory }: HomeProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState("");
 
   const getProducts = async () => {
@@ -57,6 +69,23 @@ function Home({ onPay, onHistory }: HomeProps) {
 
       const data = await response.json();
 
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        try {
+          sessionStorage.setItem(
+            "session_expired",
+            "1"
+          );
+        } catch {
+          // abaikan jika sessionStorage tidak tersedia
+        }
+
+        window.location.reload();
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(
           data.message || "Gagal mengambil data produk"
@@ -80,6 +109,50 @@ function Home({ onPay, onHistory }: HomeProps) {
   useEffect(() => {
     getProducts();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (event.key === "/") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    if (!keyword) {
+      return products;
+    }
+
+    return products.filter((product) => {
+      return (
+        product.product_name.toLowerCase().includes(keyword) ||
+        (product.category_name || "").toLowerCase().includes(keyword) ||
+        (product.sku || "").toLowerCase().includes(keyword) ||
+        (product.barcode || "").toLowerCase().includes(keyword)
+      );
+    });
+  }, [products, search]);
 
   const increaseQuantity = (product: Product) => {
     setQuantities((prev) => {
@@ -158,6 +231,135 @@ function Home({ onPay, onHistory }: HomeProps) {
     window.location.reload();
   };
 
+  const [shift, setShift] = useState<{
+    id: number;
+    opened_at: string;
+    opening_cash: number | string;
+  } | null>(null);
+
+  const [showShiftModal, setShowShiftModal] =
+    useState(false);
+  const [shiftCash, setShiftCash] = useState("");
+  const [shiftError, setShiftError] = useState("");
+  const [shiftLoading, setShiftLoading] = useState(false);
+
+  const fetchShiftStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `${API_URL}/api/shifts/status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data?.data) {
+        setShift(data.data);
+      } else {
+        setShift(null);
+      }
+    } catch {
+      setShift(null);
+    }
+  };
+
+  useEffect(() => {
+    fetchShiftStatus();
+  }, []);
+
+  const openShiftModal = () => {
+    setShiftCash("");
+    setShiftError("");
+    setShowShiftModal(true);
+  };
+
+  const closeShiftModal = () => {
+    if (shiftLoading) return;
+    setShowShiftModal(false);
+    setShiftError("");
+  };
+
+  const handleShiftSubmit = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+    setShiftError("");
+
+    if (
+      shiftCash === "" ||
+      Number.isNaN(Number(shiftCash)) ||
+      Number(shiftCash) < 0
+    ) {
+      setShiftError("Nominal kas tidak valid.");
+      return;
+    }
+
+    try {
+      setShiftLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      const isOpen = !shift;
+
+      const response = await fetch(
+        `${API_URL}/api/shifts/${isOpen ? "open" : "close"}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(
+            isOpen
+              ? { opening_cash: Number(shiftCash) }
+              : { closing_cash: Number(shiftCash) }
+          ),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Gagal memproses shift."
+        );
+      }
+
+      if (!isOpen && data?.data) {
+        const diff = Number(data.data.diff || 0);
+        const expected = Number(
+          data.data.expected_cash || 0
+        );
+
+        alert(
+          `Shift ditutup.\nKas seharusnya: ${formatRupiah(
+            expected
+          )}\nSelisih: ${
+            diff === 0
+              ? "Pas"
+              : formatRupiah(diff)
+          }`
+        );
+      }
+
+      await fetchShiftStatus();
+      closeShiftModal();
+    } catch (err) {
+      setShiftError(
+        err instanceof Error
+          ? err.message
+          : "Gagal memproses shift."
+      );
+    } finally {
+      setShiftLoading(false);
+    }
+  };
+
   const handlePay = () => {
     if (selectedProducts.length === 0) {
       return;
@@ -179,6 +381,25 @@ function Home({ onPay, onHistory }: HomeProps) {
         </div>
 
         <div className="home-header-actions">
+          <ThemeToggle />
+
+          <button
+            type="button"
+            className={
+              shift
+                ? "home-shift-chip open"
+                : "home-shift-chip"
+            }
+            onClick={openShiftModal}
+            title={
+              shift
+                ? `Shift #${shift.id} terbuka`
+                : "Belum ada shift terbuka"
+            }
+          >
+            {shift ? `Shift #${shift.id}` : "Shift: Tutup"}
+          </button>
+
           <button
             type="button"
             className="home-history-button"
@@ -197,6 +418,97 @@ function Home({ onPay, onHistory }: HomeProps) {
         </div>
       </header>
 
+      {showShiftModal && (
+        <div
+          className="shift-modal-overlay"
+          onClick={closeShiftModal}
+        >
+          <div
+            className="shift-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shift-modal-header">
+              <div>
+                <span className="page-label">
+                  SHIFT KASIR
+                </span>
+
+                <h3>
+                  {shift
+                    ? `Tutup Shift #${shift.id}`
+                    : "Buka Shift"}
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                className="shift-modal-close"
+                onClick={closeShiftModal}
+                disabled={shiftLoading}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleShiftSubmit}>
+              {shiftError && (
+                <div
+                  className="shift-error"
+                  role="alert"
+                >
+                  <span>!</span>
+                  {shiftError}
+                </div>
+              )}
+
+              <div className="shift-field">
+                <label htmlFor="shift-cash">
+                  {shift
+                    ? "Kas akhir (Rp)"
+                    : "Modal awal (Rp)"}
+                </label>
+
+                <input
+                  id="shift-cash"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  value={shiftCash}
+                  onChange={(e) =>
+                    setShiftCash(e.target.value)
+                  }
+                  disabled={shiftLoading}
+                  required
+                />
+              </div>
+
+              <div className="shift-actions">
+                <button
+                  type="button"
+                  className="shift-cancel"
+                  onClick={closeShiftModal}
+                  disabled={shiftLoading}
+                >
+                  Batal
+                </button>
+
+                <button
+                  type="submit"
+                  className="shift-submit"
+                  disabled={shiftLoading}
+                >
+                  {shiftLoading
+                    ? "Memproses..."
+                    : shift
+                      ? "Tutup Shift"
+                      : "Buka Shift"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <main className="cashier-layout">
         <section className="products-section">
           <div className="products-section-header">
@@ -209,8 +521,20 @@ function Home({ onPay, onHistory }: HomeProps) {
             </div>
 
             <div className="product-count">
-              {products.length} produk
+              {filteredProducts.length} produk
             </div>
+          </div>
+
+          <div className="cashier-search">
+            <span className="cashier-search-icon">⌕</span>
+
+            <input
+              ref={searchRef}
+              type="text"
+              placeholder="Cari nama, SKU, atau scan barcode... ( / )"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
 
           {loading && (
@@ -238,19 +562,23 @@ function Home({ onPay, onHistory }: HomeProps) {
             </div>
           )}
 
-          {!loading && !error && products.length === 0 && (
+          {!loading && !error && filteredProducts.length === 0 && (
             <div className="home-state">
               <div className="state-icon">P</div>
 
               <h3>Belum ada produk</h3>
 
-              <p>Produk belum tersedia.</p>
+              <p>
+                {search
+                  ? "Tidak ada produk yang cocok dengan pencarian."
+                  : "Produk belum tersedia."}
+              </p>
             </div>
           )}
 
-          {!loading && !error && products.length > 0 && (
+          {!loading && !error && filteredProducts.length > 0 && (
             <div className="home-product-grid">
-              {products.map((product) => {
+              {filteredProducts.map((product) => {
                 const quantity = quantities[product.id] || 0;
                 const isSelected = quantity > 0;
                 const isOutOfStock = product.stock <= 0;
@@ -311,6 +639,15 @@ function Home({ onPay, onHistory }: HomeProps) {
 
                       <p className="product-stock">
                         Stok {product.stock}
+                        {product.stock > 0 &&
+                          product.stock <=
+                            Number(
+                              product.min_stock ?? 0
+                            ) &&
+                          Number(
+                            product.min_stock ?? 0
+                          ) > 0 &&
+                          " • Menipis"}
                       </p>
                     </div>
 
@@ -442,6 +779,8 @@ function Home({ onPay, onHistory }: HomeProps) {
           </div>
         </aside>
       </main>
+
+      <Footer />
     </div>
   );
 }

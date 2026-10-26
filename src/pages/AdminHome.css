@@ -4,8 +4,8 @@
 
 .admin-layout {
   min-height: 100vh;
-  background: #f6f7f9;
-  color: #202228;
+  background: var(--bg);
+  color: var(--text);
 }
 
 /* SIDEBAR */
@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 7px;
+  border-radius: 8px;
   background: #ffffff;
   color: #181a1e;
   font-size: 14px;
@@ -49,9 +49,10 @@
 .sidebar-header h2 {
   margin: 0;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .sidebar-header span {
@@ -218,22 +219,63 @@
 .admin-main {
   min-height: 100vh;
   margin-left: 238px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* TOPBAR */
 
 .admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   min-height: 72px;
   display: flex;
   align-items: center;
-  padding: 0 30px;
-  background: #ffffff;
-  border-bottom: 1px solid #e3e5e8;
+  gap: 12px;
+  padding: 10px 30px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(20, 24, 30, 0.04);
+}
+
+.topbar-menu-button {
+  display: none;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.topbar-menu-button:hover {
+  background: var(--surface-2);
+}
+
+.topbar-title {
+  min-width: 0;
+}
+
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-scrim {
+  display: none;
 }
 
 .admin-topbar h1 {
   margin: 0;
-  color: #202228;
+  color: var(--text);
   font-size: 19px;
   font-weight: 650;
   line-height: 1.2;
@@ -241,15 +283,26 @@
 
 .admin-topbar p {
   margin: 5px 0 0;
-  color: #858a92;
+  color: var(--muted);
   font-size: 11px;
   line-height: 1.3;
+}
+
+.admin-topbar .theme-toggle {
+  margin-left: 0;
 }
 
 /* CONTENT */
 
 .admin-content {
-  padding: 28px 30px 40px;
+  flex: 1;
+  padding: 24px 30px 40px;
+}
+
+.admin-content > * {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
 }
 
 /* DASHBOARD */
@@ -262,12 +315,12 @@
 
 .dashboard-intro {
   padding: 4px 0 27px;
-  border-bottom: 1px solid #e2e4e8;
+  border-bottom: 1px solid var(--border);
 }
 
 .dashboard-eyebrow {
   margin: 0 0 7px;
-  color: #777d86;
+  color: var(--muted);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.4px;
@@ -275,16 +328,17 @@
 
 .dashboard-intro h2 {
   margin: 0;
-  color: #202228;
+  color: var(--text);
   font-size: 26px;
   font-weight: 650;
+  letter-spacing: -0.3px;
   line-height: 1.25;
 }
 
 .dashboard-intro > p:last-child {
   max-width: 570px;
   margin: 8px 0 0;
-  color: #777d86;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -295,20 +349,56 @@
   margin-top: 27px;
 }
 
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.dashboard-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(20, 24, 30, 0.04);
+}
+
+.dashboard-stat-card span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.dashboard-stat-card strong {
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.dashboard-menu-item.static {
+  cursor: default;
+}
+
+.dashboard-menu-item.static:hover {
+  background: var(--surface);
+}
+
 .section-heading {
   margin-bottom: 13px;
 }
 
 .section-heading h3 {
   margin: 0;
-  color: #292c31;
+  color: var(--text);
   font-size: 14px;
   font-weight: 650;
 }
 
 .section-heading p {
   margin: 4px 0 0;
-  color: #858a92;
+  color: var(--muted);
   font-size: 11px;
 }
 
@@ -316,9 +406,10 @@
 
 .dashboard-menu-list {
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid #e1e3e7;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(20, 24, 30, 0.04);
 }
 
 .dashboard-menu-item {
@@ -328,8 +419,8 @@
   align-items: center;
   padding: 0 19px;
   border: none;
-  border-bottom: 1px solid #e8e9ec;
-  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
   font-family: inherit;
   text-align: left;
   cursor: pointer;
@@ -343,13 +434,13 @@
 }
 
 .dashboard-menu-item:hover {
-  background: #fafbfc;
+  background: var(--surface-2);
 }
 
 .menu-item-number {
   width: 38px;
   flex-shrink: 0;
-  color: #a1a5ac;
+  color: var(--muted);
   font-size: 10px;
   font-weight: 600;
 }
@@ -363,20 +454,20 @@
 }
 
 .menu-item-content strong {
-  color: #292c31;
+  color: var(--text);
   font-size: 12px;
   font-weight: 650;
 }
 
 .menu-item-content span {
-  color: #858a92;
+  color: var(--muted);
   font-size: 10px;
   line-height: 1.4;
 }
 
 .menu-item-arrow {
   margin-left: 15px;
-  color: #9a9fa7;
+  color: var(--muted);
   font-size: 15px;
   transition:
     color 0.15s ease,
@@ -384,7 +475,7 @@
 }
 
 .dashboard-menu-item:hover .menu-item-arrow {
-  color: #202228;
+  color: var(--text);
   transform: translateX(3px);
 }
 
@@ -406,13 +497,40 @@
   .admin-content {
     padding: 24px 23px 35px;
   }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 700px) {
+  .topbar-menu-button {
+    display: inline-flex;
+  }
+
   .admin-sidebar {
-    position: static;
-    width: 100%;
-    min-height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(270px, 84vw);
+    transform: translateX(-102%);
+    transition: transform 0.2s ease;
+  }
+
+  .admin-layout.sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+
+  .admin-layout.sidebar-open .sidebar-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    border: none;
+    padding: 0;
+    background: var(--overlay);
+    cursor: pointer;
   }
 
   .sidebar-menu {
@@ -478,6 +596,10 @@
 
   .admin-content {
     padding: 18px 14px 25px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
   }
 
   .dashboard-intro h2 {

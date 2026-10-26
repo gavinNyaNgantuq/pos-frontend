@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CustomerHome.css";
+import Footer from "../components/Footer";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Product {
   id: number;
@@ -82,12 +84,16 @@ function CustomerHome({ onLogout }: CustomerHomeProps) {
           <p>Temukan produk yang kamu butuhkan</p>
         </div>
 
-        <button
-          className="customer-logout"
-          onClick={onLogout}
-        >
-          Logout
-        </button>
+        <div className="customer-header-right">
+          <ThemeToggle />
+
+          <button
+            className="customer-logout"
+            onClick={onLogout}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       <main className="customer-content">
@@ -168,6 +174,8 @@ function CustomerHome({ onLogout }: CustomerHomeProps) {
             </div>
           )}
       </main>
+
+      <Footer />
     </div>
   );
 }

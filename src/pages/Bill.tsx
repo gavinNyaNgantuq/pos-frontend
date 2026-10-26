@@ -1,9 +1,12 @@
 import { jsPDF } from "jspdf";
 import "./Bill.css";
+import Footer from "../components/Footer";
+import ThemeToggle from "../components/ThemeToggle";
 import image1 from "../assets/image1.png";
 
 interface Transaction {
   id: number;
+  invoice_no?: string | null;
   user_id: number;
   username: string;
 
@@ -21,6 +24,7 @@ interface Transaction {
 
   payment: number | string | null;
   payment_method: string | null;
+  payment_ref?: string | null;
   change: number | string | null;
 
   status: number;
@@ -85,8 +89,8 @@ function Bill({
     );
 
     const pdfHeight = Math.max(
-      150,
-      125 + productHeight
+      155,
+      130 + productHeight
     );
 
     const pdf = new jsPDF({
@@ -96,9 +100,51 @@ function Bill({
       compress: true,
     });
 
-    const left = 5;
-    const right = 75;
-    const center = 40;
+    const pageWidth =
+      pdf.internal.pageSize.getWidth();
+
+    const margin = 5;
+    const left = margin;
+    const right = pageWidth - margin;
+    const center = pageWidth / 2;
+
+    const contentWidth = right - left;
+    const lineGap = 4;
+
+    // Satu baris label (kiri) + nilai (kanan).
+    // Nilai dibatasi agar tidak menimpa label; auto-wrap.
+    const drawRow = (
+      label: string,
+      value: string | number,
+      boldValue = false
+    ) => {
+      pdf.setFont("helvetica", "normal");
+
+      const labelWidth = pdf.getTextWidth(label);
+
+      pdf.text(label, left, y);
+
+      pdf.setFont(
+        "helvetica",
+        boldValue ? "bold" : "normal"
+      );
+
+      const valueWidth = Math.max(
+        contentWidth - labelWidth - 2,
+        20
+      );
+
+      const lines = pdf.splitTextToSize(
+        String(value),
+        valueWidth
+      );
+
+      pdf.text(lines, right, y, {
+        align: "right",
+      });
+
+      return Math.max(1, lines.length);
+    };
 
     let y = 7;
 
@@ -107,7 +153,7 @@ function Bill({
       pdf.addImage(
         image1,
         "PNG",
-        32.5,
+        center - 7.5,
         y,
         15,
         15
@@ -154,60 +200,28 @@ function Bill({
     // INFORMASI TRANSAKSI
     pdf.setFontSize(8);
 
-    pdf.text(
+    let infoLines = drawRow(
       "No. Transaksi",
-      left,
-      y
+      transaction.invoice_no ||
+        `#${transaction.id}`,
+      true
     );
 
-    pdf.setFont("helvetica", "bold");
+    y += 5 + (infoLines - 1) * lineGap;
 
-    pdf.text(
-      `#${transaction.id}`,
-      right,
-      y,
-      {
-        align: "right",
-      }
-    );
-
-    y += 5;
-
-    pdf.setFont("helvetica", "normal");
-
-    pdf.text(
+    infoLines = drawRow(
       "Tanggal",
-      left,
-      y
+      formatDate(transaction.created_at)
     );
 
-    pdf.text(
-      formatDate(transaction.created_at),
-      right,
-      y,
-      {
-        align: "right",
-      }
-    );
+    y += 5 + (infoLines - 1) * lineGap;
 
-    y += 5;
-
-    pdf.text(
+    infoLines = drawRow(
       "Kasir",
-      left,
-      y
+      transaction.username || "-"
     );
 
-    pdf.text(
-      transaction.username || "-",
-      right,
-      y,
-      {
-        align: "right",
-      }
-    );
-
-    y += 5;
+    y += 5 + (infoLines - 1) * lineGap;
 
     pdf.line(left, y, right, y);
 
@@ -245,7 +259,7 @@ function Bill({
         const productLines =
           pdf.splitTextToSize(
             productName,
-            70
+            contentWidth
           );
 
         pdf.setFont(
@@ -260,17 +274,23 @@ function Bill({
         );
 
         y +=
-          productLines.length * 4;
+          productLines.length * lineGap;
+
+        const detailText =
+          `${product.quantity} x ${formatRupiah(
+            product.price
+          )}`;
 
         pdf.setFont(
           "helvetica",
           "normal"
         );
 
+        const detailWidth =
+          pdf.getTextWidth(detailText);
+
         pdf.text(
-          `${product.quantity} x ${formatRupiah(
-            product.price
-          )}`,
+          detailText,
           left,
           y
         );
@@ -280,18 +300,27 @@ function Bill({
           "bold"
         );
 
-        pdf.text(
-          formatRupiah(
-            product.subtotal
-          ),
-          right,
-          y,
-          {
-            align: "right",
-          }
+        const subtotalWidth = Math.max(
+          contentWidth - detailWidth - 2,
+          20
         );
 
-        y += 6;
+        const subtotalLines =
+          pdf.splitTextToSize(
+            formatRupiah(
+              product.subtotal
+            ),
+            subtotalWidth
+          );
+
+        pdf.text(subtotalLines, right, y, {
+          align: "right",
+        });
+
+        y +=
+          6 +
+          (subtotalLines.length - 1) *
+            lineGap;
       });
     }
 
@@ -300,69 +329,34 @@ function Bill({
     y += 5;
 
     // SUMMARY
-    pdf.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    pdf.text(
+    let summaryLines = drawRow(
       "Subtotal",
-      left,
-      y
-    );
-
-    pdf.text(
       formatRupiah(
         transaction.total_before_discount
-      ),
-      right,
-      y,
-      {
-        align: "right",
-      }
+      )
     );
 
-    y += 5;
+    y += 5 + (summaryLines - 1) * lineGap;
 
-    pdf.text(
+    summaryLines = drawRow(
       "Diskon",
-      left,
-      y
-    );
-
-    pdf.text(
       `- ${formatRupiah(
         transaction.discount
-      )}`,
-      right,
-      y,
-      {
-        align: "right",
-      }
+      )}`
     );
 
-    y += 5;
+    y += 5 + (summaryLines - 1) * lineGap;
 
-    pdf.text(
+    summaryLines = drawRow(
       transaction.tax_rate
         ? `Pajak (${transaction.tax_rate}%)`
         : "Pajak",
-      left,
-      y
-    );
-
-    pdf.text(
       formatRupiah(
         transaction.tax_amount
-      ),
-      right,
-      y,
-      {
-        align: "right",
-      }
+      )
     );
 
-    y += 5;
+    y += 5 + (summaryLines - 1) * lineGap;
 
     pdf.line(left, y, right, y);
 
@@ -376,91 +370,72 @@ function Bill({
 
     pdf.setFontSize(10);
 
-    pdf.text(
-      "TOTAL",
-      left,
-      y
+    const totalLabelWidth =
+      pdf.getTextWidth("TOTAL");
+
+    const totalValueWidth = Math.max(
+      contentWidth - totalLabelWidth - 2,
+      20
     );
 
-    pdf.text(
-      formatRupiah(
-        transaction.total_after_tax
-      ),
-      right,
-      y,
-      {
-        align: "right",
-      }
-    );
+    const totalValueLines =
+      pdf.splitTextToSize(
+        formatRupiah(
+          transaction.total_after_tax
+        ),
+        totalValueWidth
+      );
 
-    y += 7;
+    pdf.text("TOTAL", left, y);
+
+    pdf.text(totalValueLines, right, y, {
+      align: "right",
+    });
+
+    y +=
+      7 +
+      (totalValueLines.length - 1) * lineGap;
 
     pdf.line(left, y, right, y);
 
     y += 5;
 
     // PEMBAYARAN
-    pdf.setFont(
-      "helvetica",
-      "normal"
-    );
-
     pdf.setFontSize(8);
 
-    pdf.text(
+    let payLines = drawRow(
       "Metode",
-      left,
-      y
+      transaction.payment_method || "-"
     );
 
-    pdf.text(
-      transaction.payment_method || "-",
-      right,
-      y,
-      {
-        align: "right",
-      }
-    );
+    y += 5 + (payLines - 1) * lineGap;
 
-    y += 5;
+    if (transaction.payment_ref) {
+      payLines = drawRow(
+        "Referensi",
+        transaction.payment_ref
+      );
 
-    pdf.text(
+      y += 5 + (payLines - 1) * lineGap;
+    }
+
+    payLines = drawRow(
       "Dibayar",
-      left,
-      y
-    );
-
-    pdf.text(
       formatRupiah(
         transaction.payment
-      ),
-      right,
-      y,
-      {
-        align: "right",
-      }
+      )
     );
 
-    y += 5;
+    y += 5 + (payLines - 1) * lineGap;
 
-    pdf.text(
+    payLines = drawRow(
       "Kembalian",
-      left,
-      y
-    );
-
-    pdf.text(
       formatRupiah(
         transaction.change
-      ),
-      right,
-      y,
-      {
-        align: "right",
-      }
+      )
     );
 
-    y += 8;
+    y += 8 + (payLines - 1) * lineGap;
 
     // FOOTER
     pdf.text(
@@ -485,7 +460,10 @@ function Bill({
 
     // SAVE PDF
     pdf.save(
-      `struk-${transaction.id}.pdf`
+      `struk-${
+        transaction.invoice_no ||
+        transaction.id
+      }.pdf`
     );
   };
 
@@ -526,7 +504,8 @@ function Bill({
             </span>
 
             <strong>
-              #{transaction.id}
+              {transaction.invoice_no ||
+                `#${transaction.id}`}
             </strong>
           </div>
 
@@ -688,6 +667,20 @@ function Bill({
 
           </div>
 
+          {transaction.payment_ref && (
+            <div className="bill-summary-row">
+
+              <span>
+                Referensi
+              </span>
+
+              <span>
+                {transaction.payment_ref}
+              </span>
+
+            </div>
+          )}
+
           <div className="bill-summary-row">
 
             <span>
@@ -734,6 +727,8 @@ function Bill({
       {/* BUTTON */}
       <div className="bill-actions no-print">
 
+        <ThemeToggle />
+
         <button
           type="button"
           className="bill-back-button"
@@ -750,8 +745,17 @@ function Bill({
           Simpan PDF
         </button>
 
+        <button
+          type="button"
+          className="bill-back-button"
+          onClick={() => window.print()}
+        >
+          Cetak
+        </button>
+
       </div>
 
+      <Footer className="no-print" />
     </div>
   );
 }

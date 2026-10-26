@@ -4,7 +4,7 @@
 
 .customer-page {
   min-height: 100vh;
-  background: #f7f7f8;
+  background: var(--bg);
 }
 
 .customer-header {
@@ -13,34 +13,40 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  border-bottom: 1px solid #e4e4e7;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.customer-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .customer-header h1 {
   margin: 0;
-  color: #18181b;
+  color: var(--text);
   font-size: 18px;
 }
 
 .customer-header p {
   margin: 4px 0 0;
-  color: #71717a;
+  color: var(--muted);
   font-size: 12px;
 }
 
 .customer-logout {
   height: 34px;
   padding: 0 15px;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  background: #ffffff;
-  color: #52525b;
+  background: var(--surface);
+  color: var(--muted);
   cursor: pointer;
 }
 
 .customer-logout:hover {
-  background: #f4f4f5;
+  background: var(--surface-2);
 }
 
 .customer-content {
@@ -55,13 +61,13 @@
 
 .customer-heading h2 {
   margin: 0;
-  color: #18181b;
+  color: var(--text);
   font-size: 22px;
 }
 
 .customer-heading p {
   margin: 5px 0 0;
-  color: #71717a;
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -76,14 +82,14 @@
 
 .customer-product-card {
   padding: 18px;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--border);
   border-radius: 9px;
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .customer-product-category {
   margin-bottom: 9px;
-  color: #71717a;
+  color: var(--muted);
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
@@ -91,19 +97,19 @@
 
 .customer-product-card h3 {
   margin: 0 0 12px;
-  color: #18181b;
+  color: var(--text);
   font-size: 16px;
 }
 
 .customer-product-card strong {
   display: block;
-  color: #18181b;
+  color: var(--text);
   font-size: 17px;
 }
 
 .customer-product-card p {
   margin: 8px 0 16px;
-  color: #71717a;
+  color: var(--muted);
   font-size: 11px;
 }
 
@@ -112,7 +118,7 @@
   height: 38px;
   border: none;
   border-radius: 6px;
-  background: #18181b;
+  background: var(--text);
   color: #ffffff;
   font-size: 12px;
   font-weight: 600;
@@ -120,20 +126,20 @@
 }
 
 .customer-buy-button:hover:not(:disabled) {
-  background: #27272a;
+  background: var(--text);
 }
 
 .customer-buy-button:disabled {
-  background: #e4e4e7;
-  color: #a1a1aa;
+  background: var(--surface-2);
+  color: var(--placeholder);
   cursor: not-allowed;
 }
 
 .customer-state {
   padding: 70px 20px;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--border);
   border-radius: 9px;
-  background: #ffffff;
+  background: var(--surface);
   text-align: center;
 }
 
@@ -144,7 +150,7 @@
 
 .customer-state p {
   margin: 0;
-  color: #71717a;
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -155,18 +161,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e4e4e7;
+  border: 1px solid var(--border);
   border-radius: 50%;
-  color: #71717a;
+  color: var(--muted);
   font-weight: 700;
 }
 
 .customer-retry {
   margin-top: 16px;
   padding: 9px 15px;
-  border: 1px solid #d4d4d8;
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--surface);
   cursor: pointer;
 }
 
@@ -174,8 +180,8 @@
   width: 30px;
   height: 30px;
   margin: 0 auto 14px;
-  border: 3px solid #e4e4e7;
-  border-top-color: #52525b;
+  border: 3px solid var(--surface-2);
+  border-top-color: var(--muted);
   border-radius: 50%;
   animation: customer-spin 0.8s linear infinite;
 }

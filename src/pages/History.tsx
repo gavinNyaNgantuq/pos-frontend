@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import "./History.css";
+import Footer from "../components/Footer";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Transaction {
   id: number;
+  invoice_no?: string | null;
   user_id: number;
   username: string;
   total_before_discount: number | string | null;
@@ -143,13 +146,17 @@ function History({
           </div>
         </div>
 
-        <button
-          type="button"
-          className="history-logout-button"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
+        <div className="history-header-right">
+          <ThemeToggle />
+
+          <button
+            type="button"
+            className="history-logout-button"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       <main className="history-content">
@@ -228,7 +235,8 @@ function History({
                       <tr key={transaction.id}>
                         <td>
                           <strong>
-                            #{transaction.id}
+                            {transaction.invoice_no ||
+                              `#${transaction.id}`}
                           </strong>
                         </td>
 
@@ -296,6 +304,8 @@ function History({
             </div>
           )}
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -1,0 +1,231 @@
+/* =====================================================
+   POS Design Tokens — Light / Dark Theme
+   Light = warna existing (tidak berubah).
+   Dark = override di [data-theme="dark"].
+   Semua halaman memakai variabel ini agar theme
+   konsisten dan mudah dirawat.
+   ===================================================== */
+
+:root {
+  color-scheme: light;
+
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #f7f8f9;
+  --surface-3: #eef0f2;
+
+  --text: #202228;
+  --text-2: #454a52;
+  --ink: #111827;
+  --muted: #858a92;
+  --placeholder: #a0a4aa;
+
+  --border: #e2e4e8;
+  --border-soft: #eef0f2;
+  --border-strong: #dfe2e6;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft-bg: #eff6ff;
+  --primary-soft-text: #4169a8;
+  --primary-soft-border: #d7e1f5;
+  --primary-ring: #edf3ff;
+  --primary-focus: #9db8eb;
+
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-text: #b64242;
+  --danger-strong: #dc2626;
+  --danger-soft: #f3dede;
+
+  --success-bg: #f1f7f2;
+  --success-text: #4e7658;
+  --success-dot: #5f986b;
+
+  --warning-bg: #fff5ed;
+  --warning-text: #a96835;
+
+  --sidebar-bg: #181a1e;
+  --sidebar-bg-hover: #22252a;
+  --sidebar-active: #292d34;
+  --sidebar-border: #292c31;
+  --sidebar-text: #aeb2b9;
+  --sidebar-muted: #656b74;
+
+  --input-bg: #ffffff;
+  --input-disabled: #f5f6f7;
+  --hover-bg: #fafbfc;
+
+  --overlay: rgba(20, 24, 30, 0.45);
+
+  /* Shared admin layout tokens (additive, no color change). */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --input-height: 38px;
+  --btn-height: 36px;
+  --shadow-sm: 0 1px 2px rgba(20, 24, 30, 0.05);
+  --shadow-md: 0 12px 32px rgba(20, 24, 30, 0.14);
+  --content-max: 1120px;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #131518;
+  --surface: #1c1f24;
+  --surface-2: #22262c;
+  --surface-3: #2a2f36;
+
+  --text: #e9ebef;
+  --text-2: #c3c9d2;
+  --ink: #e8eaef;
+  --muted: #9aa1ab;
+  --placeholder: #6b7280;
+
+  --border: #2a2f36;
+  --border-soft: #23282e;
+  --border-strong: #3b424b;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft-bg: #1e2a45;
+  --primary-soft-text: #8fb0ff;
+  --primary-soft-border: #2e4468;
+  --primary-ring: rgba(37, 99, 235, 0.28);
+  --primary-focus: #2e4468;
+
+  --danger-bg: #2a1d1f;
+  --danger-border: #5a2b2e;
+  --danger-text: #f0a3a3;
+  --danger-strong: #e06565;
+  --danger-soft: #4a2b2e;
+
+  --success-bg: #16281f;
+  --success-text: #7fce9f;
+  --success-dot: #4caf7d;
+
+  --warning-bg: #2b2118;
+  --warning-text: #e0aa6e;
+
+  --sidebar-bg: #101216;
+  --sidebar-bg-hover: #1a1d22;
+  --sidebar-active: #22262c;
+  --sidebar-border: #23262b;
+  --sidebar-text: #c6ccd4;
+  --sidebar-muted: #7d8590;
+
+  --input-bg: #1c1f24;
+  --input-disabled: #22262c;
+  --hover-bg: #22262c;
+
+  --overlay: rgba(0, 0, 0, 0.62);
+}
+
+/* ---------- transisi theme yang smooth & cepat ---------- */
+
+html.theme-anim body,
+html.theme-anim header,
+html.theme-anim aside,
+html.theme-anim main,
+html.theme-anim section,
+html.theme-anim footer,
+html.theme-anim div,
+html.theme-anim table,
+html.theme-anim input,
+html.theme-anim select,
+html.theme-anim button,
+html.theme-anim span,
+html.theme-anim p,
+html.theme-anim h1,
+html.theme-anim h2,
+html.theme-anim h3 {
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease !important;
+}
+
+/* ---------- kasus khusus dark mode ---------- */
+
+/* Tombol gelap menjadi terang agar teks putih tetap terbaca */
+[data-theme="dark"] .login-submit {
+  background: #e8eaef;
+  border-color: #e8eaef;
+  color: #131518;
+}
+
+[data-theme="dark"] .login-submit:hover:not(:disabled) {
+  background: #d4d9e0;
+  border-color: #d4d9e0;
+}
+
+[data-theme="dark"] .login-submit:active:not(:disabled) {
+  background: #b9bfc8;
+  border-color: #b9bfc8;
+}
+
+[data-theme="dark"] .home-brand-mark,
+[data-theme="dark"] .login-brand-mark {
+  background: #e8eaef;
+  color: #131518;
+}
+
+[data-theme="dark"] .payment-confirm-button,
+[data-theme="dark"] .payment-method.active,
+[data-theme="dark"] .history-logout-button,
+[data-theme="dark"] .history-error button,
+[data-theme="dark"] .bill-print-button,
+[data-theme="dark"] .customer-buy-button {
+  background: #e8eaef;
+  border-color: #e8eaef;
+  color: #131518;
+}
+
+[data-theme="dark"] .payment-confirm-button:hover:not(:disabled),
+[data-theme="dark"] .history-logout-button:hover,
+[data-theme="dark"] .history-error button:hover,
+[data-theme="dark"] .bill-print-button:hover,
+[data-theme="dark"] .customer-buy-button:hover:not(:disabled) {
+  background: #d4d9e0;
+  border-color: #d4d9e0;
+}
+
+/* Ikon dekoratif berwarna tetap (di atas tint yang ikut theme) */
+[data-theme="dark"] .stat-icon,
+[data-theme="dark"] .tax-avatar,
+[data-theme="dark"] .category-avatar,
+[data-theme="dark"] .role-avatar,
+[data-theme="dark"] .product-avatar,
+[data-theme="dark"] .user-avatar,
+[data-theme="dark"] .user-stat-icon,
+[data-theme="dark"] .cart-empty-icon,
+[data-theme="dark"] .state-icon,
+[data-theme="dark"] .login-google-logo {
+  filter: brightness(1.15);
+}
+
+/* ---------- cetak struk selalu terang ---------- */
+
+@media print {
+  :root,
+  [data-theme="dark"] {
+    color-scheme: light;
+
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #ffffff;
+    --surface-3: #ffffff;
+    --text: #000000;
+    --text-2: #000000;
+    --muted: #000000;
+    --border: #ffffff;
+    --border-soft: #ffffff;
+    --border-strong: #ffffff;
+    --input-bg: #ffffff;
+    --hover-bg: #ffffff;
+  }
+}

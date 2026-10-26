@@ -6,78 +6,12 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  color: #222;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* =========================
-   LOGIN
-========================= */
-
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-}
-
-.login-box {
-  width: 350px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-}
-
-.login-box h1 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.login-box input {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  outline: none;
-}
-
-.login-box input:focus {
-  border-color: #2563eb;
-}
-
-.login-box input:disabled {
-  background: #eee;
-  cursor: not-allowed;
-}
-
-.login-box button {
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  background: #2563eb;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.login-box button:hover {
-  background: #1d4ed8;
-}
-
-.login-box button:disabled {
-  background: #93c5fd;
-  cursor: not-allowed;
-}
-
-.login-box p {
-  text-align: center;
-  color: red;
-}
+/* Login styles live in src/pages/Login.css
+   to stay consistent with the Dashboard. */
 
 /* =========================
    HOME
@@ -85,7 +19,7 @@ body {
 
 .home-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg);
 }
 
 .home-header {
@@ -94,7 +28,7 @@ body {
   align-items: center;
   padding: 25px 40px;
   background: white;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--placeholder);
 }
 
 .home-header h1 {
@@ -103,7 +37,7 @@ body {
 }
 
 .home-header p {
-  color: #777;
+  color: var(--muted);
 }
 
 /* =========================
@@ -175,7 +109,7 @@ body {
   justify-content: center;
   align-items: center;
 
-  background: #eee;
+  background: var(--surface-2);
   border-radius: 8px;
 
   font-size: 50px;
@@ -189,7 +123,7 @@ body {
 .product-category {
   display: inline-block;
   font-size: 13px;
-  color: #777;
+  color: var(--muted);
   margin-bottom: 5px;
 }
 
@@ -206,7 +140,7 @@ body {
 }
 
 .product-stock {
-  color: #666;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -240,11 +174,11 @@ body {
 }
 
 .quantity-button.minus {
-  background: #ef4444;
+  background: var(--danger-strong);
 }
 
 .quantity-button.plus {
-  background: #22c55e;
+  background: var(--success-dot);
 }
 
 .quantity-button:hover {
@@ -252,7 +186,7 @@ body {
 }
 
 .quantity-button:disabled {
-  background: #ccc;
+  background: var(--placeholder);
   cursor: not-allowed;
   opacity: 1;
 }
@@ -285,7 +219,7 @@ body {
 }
 
 .state-container p {
-  color: #777;
+  color: var(--muted);
 }
 
 .state-icon {
@@ -300,8 +234,8 @@ body {
   width: 45px;
   height: 45px;
 
-  border: 5px solid #ddd;
-  border-top: 5px solid #2563eb;
+  border: 5px solid var(--placeholder);
+  border-top: 5px solid var(--primary);
 
   border-radius: 50%;
 
@@ -332,14 +266,14 @@ body {
   border: none;
   border-radius: 6px;
 
-  background: #2563eb;
+  background: var(--primary);
   color: white;
 
   cursor: pointer;
 }
 
 .retry-button:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
 }
 
 /* =========================
@@ -372,7 +306,7 @@ body {
 }
 
 .payment-summary span {
-  color: #777;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -386,7 +320,7 @@ body {
   border: none;
   border-radius: 7px;
 
-  background: #2563eb;
+  background: var(--primary);
   color: white;
 
   font-size: 16px;
@@ -396,7 +330,7 @@ body {
 }
 
 .pay-button:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
 }
 
 /* =========================
@@ -405,7 +339,7 @@ body {
 
 .payment-page {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: var(--bg);
 }
 
 /* =========================
@@ -422,7 +356,7 @@ body {
 
   background: white;
 
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--placeholder);
 }
 
 .payment-header h1 {
@@ -442,18 +376,18 @@ body {
   border: none;
   border-radius: 6px;
 
-  background: #555;
+  background: var(--text-2);
   color: white;
 
   cursor: pointer;
 }
 
 .back-button:hover {
-  background: #333;
+  background: var(--text);
 }
 
 .back-button:disabled {
-  background: #aaa;
+  background: var(--placeholder);
   cursor: not-allowed;
 }
 
@@ -508,7 +442,7 @@ body {
 
   padding: 15px 0;
 
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .order-item h3 {
@@ -517,7 +451,7 @@ body {
 }
 
 .order-item p {
-  color: #777;
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -553,7 +487,7 @@ body {
 
   padding: 12px;
 
-  border: 1px solid #ccc;
+  border: 1px solid var(--placeholder);
   border-radius: 6px;
 
   font-size: 15px;
@@ -566,11 +500,11 @@ body {
 }
 
 .payment-card select:focus {
-  border-color: #2563eb;
+  border-color: var(--primary);
 }
 
 .payment-card select:disabled {
-  background: #eee;
+  background: var(--surface-2);
   cursor: not-allowed;
 }
 
@@ -586,7 +520,7 @@ body {
   border: none;
   border-radius: 8px;
 
-  background: #2563eb;
+  background: var(--primary);
   color: white;
 
   font-size: 17px;
@@ -596,11 +530,11 @@ body {
 }
 
 .paid-button:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
 }
 
 .paid-button:disabled {
-  background: #93c5fd;
+  background: var(--primary-focus);
   cursor: not-allowed;
 }
 
@@ -671,7 +605,7 @@ body {
 
   border-radius: 50%;
 
-  background: #22c55e;
+  background: var(--success-dot);
 
   color: white;
 
@@ -684,12 +618,12 @@ body {
 }
 
 .success-popup p {
-  color: #666;
+  color: var(--muted);
   margin-bottom: 10px;
 }
 
 .success-popup span {
-  color: #999;
+  color: var(--placeholder);
   font-size: 13px;
 }
 

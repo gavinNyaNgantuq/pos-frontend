@@ -1,0 +1,451 @@
+/* =====================================================
+   Airus — shared admin system layer.
+   Loaded after page CSS. Unifies headers, buttons,
+   inputs, tables, badges, modals, states. No logic.
+   Page-specific selectors only; staff pages untouched.
+   ===================================================== */
+
+/* Base font + rendering for admin scope. */
+.admin-layout {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- page header unify ---------- */
+.admin-layout .products-header,
+.admin-layout .users-page-header,
+.admin-layout .categories-header,
+.admin-layout .taxes-header,
+.admin-layout .roles-header,
+.admin-layout .promotions-header,
+.admin-layout .reports-header,
+.admin-layout .shifts-header,
+.admin-layout .audit-header {
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-layout .page-label,
+.admin-layout .breadcrumb,
+.admin-layout .categories-header .page-label,
+.admin-layout .taxes-header .page-label,
+.admin-layout .roles-header .page-label,
+.admin-layout .promotions-header .page-label,
+.admin-layout .reports-header .page-label,
+.admin-layout .shifts-header .page-label,
+.admin-layout .audit-header .page-label,
+.admin-layout .products-header .page-label {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+/* ---------- primary buttons unify ---------- */
+.admin-layout .add-product-button,
+.admin-layout .users-add-button,
+.admin-layout .add-category-button,
+.admin-layout .add-tax-button,
+.admin-layout .add-role-button,
+.admin-layout .add-promotion-button,
+.admin-layout .reports-filter button,
+.admin-layout .audit-filter button,
+.admin-layout .filter-button {
+  min-height: var(--btn-height);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+.admin-layout .add-product-button:disabled,
+.admin-layout .users-add-button:disabled,
+.admin-layout .add-category-button:disabled,
+.admin-layout .add-tax-button:disabled,
+.admin-layout .add-role-button:disabled,
+.admin-layout .add-promotion-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Secondary / export button consistent. */
+.admin-layout .export-button {
+  min-height: var(--btn-height);
+  border-radius: var(--radius-sm);
+}
+
+/* Visible keyboard focus everywhere in admin. */
+.admin-layout button:focus-visible,
+.admin-layout input:focus-visible,
+.admin-layout select:focus-visible,
+.admin-layout textarea:focus-visible,
+.admin-layout a:focus-visible {
+  outline: 2px solid var(--primary-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- inputs / selects / toolbar ---------- */
+.admin-layout .search-wrapper input,
+.admin-layout .users-search input,
+.admin-layout .reports-filter input,
+.admin-layout .reports-filter select,
+.admin-layout .audit-filter input,
+.admin-layout .audit-filter select,
+.taxes-toolbar input,
+.admin-layout .user-modal-form input,
+.admin-layout .user-modal-form select,
+.admin-layout .product-modal input,
+.admin-layout .product-modal select,
+.admin-layout .product-modal textarea,
+.admin-layout .category-modal input,
+.admin-layout .category-modal textarea,
+.admin-layout .tax-modal input,
+.admin-layout .role-modal input,
+.admin-layout .role-modal select,
+.admin-layout .promotion-modal input,
+.admin-layout .promotion-modal select {
+  min-height: var(--input-height);
+  background: var(--input-bg);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+}
+
+.admin-layout .search-wrapper input::placeholder,
+.admin-layout .users-search input::placeholder {
+  color: var(--placeholder);
+}
+
+.admin-layout .search-wrapper input:disabled,
+.admin-layout .reports-filter input:disabled,
+.admin-layout .reports-filter select:disabled {
+  background: var(--input-disabled);
+  cursor: not-allowed;
+}
+
+/* ---------- table unify ---------- */
+.admin-layout .products-table-card,
+.admin-layout .users-table-card,
+.admin-layout .categories-table-card,
+.admin-layout .taxes-table-card,
+.admin-layout .roles-table-card,
+.admin-layout .promotions-table-card,
+.admin-layout .reports-table-card,
+.admin-layout .shifts-table-card,
+.admin-layout .audit-table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.admin-layout .products-table-wrapper,
+.admin-layout .users-table-wrapper,
+.admin-layout .categories-table-wrapper,
+.admin-layout .taxes-table-wrapper,
+.admin-layout .roles-table-wrapper,
+.admin-layout .promotions-table-wrapper,
+.admin-layout .reports-table-wrapper,
+.admin-layout .shifts-table-wrapper,
+.admin-layout .audit-table-wrapper,
+.admin-layout .table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-layout table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.admin-layout thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-layout tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.admin-layout tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-layout tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+/* Dark-mode fix: Taxes used flat white surfaces. */
+.admin-layout .taxes-section .tax-stat-card,
+.admin-layout .taxes-section .taxes-toolbar,
+.admin-layout .taxes-section .taxes-table-card,
+.admin-layout .taxes-section .taxes-state,
+.admin-layout .taxes-section .tax-modal {
+  background: var(--surface);
+}
+
+/* Hardcoded icon tints -> theme tokens. */
+.admin-layout .taxes-section .average-icon {
+  background: var(--primary-soft-bg);
+  color: var(--primary-soft-text);
+}
+
+.admin-layout .taxes-section .highest-icon {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.admin-layout .products-section .category-icon {
+  background: var(--surface-3);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+}
+
+/* ---------- status badges unify ---------- */
+.admin-layout .status-badge,
+.admin-layout .audit-action,
+.admin-layout .rate-badge,
+.admin-layout .role-label,
+.admin-layout .shift-status,
+.admin-layout .promo-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-layout .status-badge::before,
+.admin-layout .shift-status::before,
+.admin-layout .promo-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.admin-layout .status-badge.active,
+.admin-layout .status-badge.open,
+.admin-layout .shift-status.open,
+.admin-layout .promo-status.active {
+  background: var(--success-bg);
+  border-color: var(--border);
+  color: var(--success-text);
+}
+
+.admin-layout .status-badge.inactive,
+.admin-layout .status-badge.closed,
+.admin-layout .shift-status.closed,
+.admin-layout .promo-status.expired {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.admin-layout .status-badge.expired,
+.admin-layout .promo-status.used-up {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.admin-layout .user-modal-form .status-badge::before {
+  display: none;
+}
+
+/* ---------- stat cards: calm, scannable ---------- */
+.admin-layout .product-stat-card,
+.admin-layout .user-stat-card,
+.admin-layout .category-stat-card,
+.admin-layout .tax-stat-card,
+.admin-layout .role-stat-card,
+.admin-layout .report-stat-card {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Users stats: split joined card into calm separate cards. */
+.admin-layout .users-statistics {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  gap: 14px;
+}
+
+.admin-layout .users-statistics .user-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- modal unify ---------- */
+.admin-layout .product-modal-overlay,
+.admin-layout .user-modal-overlay,
+.admin-layout .category-modal-overlay,
+.admin-layout .tax-modal-overlay,
+.admin-layout .role-modal-overlay,
+.admin-layout .promotion-modal-overlay {
+  background: var(--overlay);
+  padding: 20px;
+}
+
+.admin-layout .product-modal,
+.admin-layout .user-modal,
+.admin-layout .category-modal,
+.admin-layout .tax-modal,
+.admin-layout .role-modal,
+.admin-layout .promotion-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  animation: admin-modal-in 0.16s ease;
+}
+
+@keyframes admin-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- pagination / states ---------- */
+.admin-layout .shifts-pagination,
+.admin-layout .audit-pagination,
+.admin-layout .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-layout .shifts-pagination button,
+.admin-layout .audit-pagination button,
+.admin-layout .pagination button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-layout .shifts-pagination button:disabled,
+.admin-layout .audit-pagination button:disabled,
+.admin-layout .pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty / loading / error calm + consistent. */
+.admin-layout .products-state,
+.admin-layout .users-state,
+.admin-layout .categories-state,
+.admin-layout .taxes-state,
+.admin-layout .roles-state,
+.admin-layout .reports-error,
+.admin-layout .state-container {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+/* Inline form errors always visible. */
+.admin-layout .form-error,
+.admin-layout .login-error,
+.admin-layout .field-error {
+  color: var(--danger-text);
+}
+
+/* ---------- responsive: laptop 1366, tablet, narrow ---------- */
+@media (max-width: 1200px) {
+  .admin-layout .product-stats,
+  .admin-layout .tax-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout .products-header,
+  .admin-layout .users-page-header,
+  .admin-layout .categories-header,
+  .admin-layout .taxes-header,
+  .admin-layout .roles-header,
+  .admin-layout .promotions-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-layout .add-product-button,
+  .admin-layout .users-add-button,
+  .admin-layout .add-category-button,
+  .admin-layout .add-tax-button,
+  .admin-layout .add-role-button,
+  .admin-layout .add-promotion-button {
+    width: 100%;
+  }
+
+  .admin-layout .reports-filter,
+  .admin-layout .audit-filter {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-layout .product-modal,
+  .admin-layout .user-modal,
+  .admin-layout .category-modal,
+  .admin-layout .tax-modal,
+  .admin-layout .role-modal,
+  .admin-layout .promotion-modal {
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-layout .product-modal,
+  .admin-layout .user-modal,
+  .admin-layout .category-modal,
+  .admin-layout .tax-modal,
+  .admin-layout .role-modal,
+  .admin-layout .promotion-modal {
+    animation: none;
+  }
+}

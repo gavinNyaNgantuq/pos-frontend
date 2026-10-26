@@ -6,9 +6,12 @@ type Product = {
   category_id: number;
   category_name: string | null;
   product_name: string;
+  sku: string | null;
+  barcode: string | null;
   image: string | null;
   price: number;
   stock: number;
+  min_stock: number;
   status: number;
   created_at: string;
   created_by: number | null;
@@ -28,6 +31,9 @@ type ProductForm = {
   product_name: string;
   price: string;
   stock: string;
+  sku: string;
+  barcode: string;
+  min_stock: string;
 };
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -50,6 +56,9 @@ function Products() {
     product_name: "",
     price: "",
     stock: "",
+    sku: "",
+    barcode: "",
+    min_stock: "0",
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -150,7 +159,9 @@ function Products() {
 
       const matchesSearch =
         product.product_name.toLowerCase().includes(keyword) ||
-        (product.category_name || "").toLowerCase().includes(keyword);
+        (product.category_name || "").toLowerCase().includes(keyword) ||
+        (product.sku || "").toLowerCase().includes(keyword) ||
+        (product.barcode || "").toLowerCase().includes(keyword);
 
       const matchesCategory =
         categoryFilter === "all" ||
@@ -171,7 +182,8 @@ function Products() {
   );
 
   const lowStock = products.filter(
-    (product) => Number(product.stock) <= 5
+    (product) =>
+      Number(product.stock) <= Number(product.min_stock ?? 0)
   ).length;
 
   const totalCategories = new Set(
@@ -189,6 +201,9 @@ function Products() {
       product_name: "",
       price: "",
       stock: "",
+      sku: "",
+      barcode: "",
+      min_stock: "0",
     });
 
     setSelectedImage(null);
@@ -209,6 +224,9 @@ function Products() {
       product_name: product.product_name,
       price: product.price.toString(),
       stock: product.stock.toString(),
+      sku: product.sku || "",
+      barcode: product.barcode || "",
+      min_stock: (product.min_stock ?? 0).toString(),
     });
 
     setSelectedImage(null);
@@ -311,6 +329,14 @@ function Products() {
       return;
     }
 
+    if (
+      form.min_stock === "" ||
+      Number(form.min_stock) < 0
+    ) {
+      setFormError("Minimum stock tidak valid.");
+      return;
+    }
+
     try {
       setSaving(true);
 
@@ -320,6 +346,9 @@ function Products() {
       formData.append("product_name", form.product_name.trim());
       formData.append("price", form.price);
       formData.append("stock", form.stock);
+      formData.append("sku", form.sku.trim());
+      formData.append("barcode", form.barcode.trim());
+      formData.append("min_stock", form.min_stock);
 
       if (selectedImage) {
         formData.append("image", selectedImage);
@@ -641,6 +670,15 @@ function Products() {
                             {product.product_name}
                           </strong>
 
+                          {(product.sku ||
+                            product.barcode) && (
+                            <small>
+                              {[product.sku, product.barcode]
+                                .filter(Boolean)
+                                .join(" • ")}
+                            </small>
+                          )}
+
                           <small>
                             Dibuat{" "}
                             {product.created_at
@@ -674,14 +712,18 @@ function Products() {
                     <td>
                       <span
                         className={
-                          Number(product.stock) <= 5
+                          Number(product.stock) <=
+                          Number(product.min_stock ?? 0)
                             ? "stock-badge low"
                             : "stock-badge"
                         }
                       >
                         {product.stock}
 
-                        {Number(product.stock) <= 5 && (
+                        {Number(product.stock) <=
+                          Number(
+                            product.min_stock ?? 0
+                          ) && (
                           <small> Menipis</small>
                         )}
                       </span>
@@ -841,6 +883,47 @@ function Products() {
                 />
               </div>
 
+              {/* SKU + BARCODE */}
+              <div className="form-row">
+
+                <div className="form-group">
+
+                  <label htmlFor="sku">
+                    SKU
+                  </label>
+
+                  <input
+                    id="sku"
+                    name="sku"
+                    type="text"
+                    placeholder="Contoh: INDM-GRG-001"
+                    value={form.sku}
+                    onChange={handleChange}
+                    disabled={saving}
+                  />
+
+                </div>
+
+                <div className="form-group">
+
+                  <label htmlFor="barcode">
+                    Barcode
+                  </label>
+
+                  <input
+                    id="barcode"
+                    name="barcode"
+                    type="text"
+                    placeholder="Scan atau ketik barcode"
+                    value={form.barcode}
+                    onChange={handleChange}
+                    disabled={saving}
+                  />
+
+                </div>
+
+              </div>
+
               {/* CATEGORY */}
               <div className="form-group">
 
@@ -917,6 +1000,25 @@ function Products() {
                     min="0"
                     placeholder="0"
                     value={form.stock}
+                    onChange={handleChange}
+                    disabled={saving}
+                  />
+
+                </div>
+
+                <div className="form-group">
+
+                  <label htmlFor="min_stock">
+                    Min. Stock
+                  </label>
+
+                  <input
+                    id="min_stock"
+                    name="min_stock"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    value={form.min_stock}
                     onChange={handleChange}
                     disabled={saving}
                   />

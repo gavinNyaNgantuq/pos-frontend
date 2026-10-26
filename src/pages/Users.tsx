@@ -5,6 +5,7 @@ type User = {
   id: number;
   username: string;
   email: string;
+  phone: string | null;
   profile_photo: string | null;
   role_id: number | null;
   role: string | null;
@@ -18,6 +19,7 @@ type User = {
 type FormData = {
   username: string;
   email: string;
+  phone: string;
   password: string;
   role_id: string;
 };
@@ -39,6 +41,7 @@ function Users() {
   const [form, setForm] = useState<FormData>({
     username: "",
     email: "",
+    phone: "",
     password: "",
     role_id: "2",
   });
@@ -72,7 +75,23 @@ function Users() {
         );
       }
 
-      setUsers(data.data || []);
+      const incoming: User[] = Array.isArray(
+        data.data
+      )
+        ? data.data
+        : [];
+
+      const seen = new Set<number>();
+      const unique = incoming.filter((user) => {
+        if (seen.has(user.id)) {
+          return false;
+        }
+
+        seen.add(user.id);
+        return true;
+      });
+
+      setUsers(unique);
     } catch (err: any) {
       setError(
         err.message ||
@@ -95,6 +114,7 @@ function Users() {
     setForm({
       username: "",
       email: "",
+      phone: "",
       password: "",
       role_id: "2",
     });
@@ -113,6 +133,7 @@ function Users() {
     setForm({
       username: "",
       email: "",
+      phone: "",
       password: "",
       role_id: "2",
     });
@@ -130,6 +151,7 @@ function Users() {
     setForm({
       username: user.username,
       email: user.email,
+      phone: user.phone || "",
       password: "",
       role_id:
         user.role_id === 1 || user.role_id === 2
@@ -174,6 +196,11 @@ function Users() {
       return;
     }
 
+    if (!form.phone.trim()) {
+      alert("Nomor telepon wajib diisi");
+      return;
+    }
+
     if (!form.role_id) {
       alert("Role wajib dipilih");
       return;
@@ -207,6 +234,7 @@ function Users() {
       const body: {
         username: string;
         email: string;
+        phone: string;
         password?: string;
         role_id: number;
       } = {
@@ -215,6 +243,9 @@ function Users() {
 
         email:
           form.email.trim(),
+
+        phone:
+          form.phone.trim(),
 
         role_id:
           Number(form.role_id),
@@ -252,6 +283,25 @@ function Users() {
       }
 
       alert(data.message);
+
+      if (editingId) {
+        const updatedId = editingId;
+
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === updatedId
+              ? {
+                  ...user,
+                  username:
+                    form.username.trim(),
+                  email: form.email.trim(),
+                  phone: form.phone.trim(),
+                  role_id: Number(form.role_id),
+                }
+              : user
+          )
+        );
+      }
 
       resetForm();
       fetchUsers();
@@ -326,6 +376,9 @@ function Users() {
           .toLowerCase()
           .includes(keyword) ||
         user.email
+          .toLowerCase()
+          .includes(keyword) ||
+        (user.phone || "")
           .toLowerCase()
           .includes(keyword)
       );
@@ -612,6 +665,12 @@ function Users() {
                             {user.email}
                           </span>
 
+                          {user.phone && (
+                            <small className="user-phone">
+                              {user.phone}
+                            </small>
+                          )}
+
                         </td>
 
                         <td>
@@ -794,6 +853,29 @@ function Users() {
                     handleChange
                   }
                   placeholder="Masukkan email"
+                />
+
+              </div>
+
+              {/* PHONE */}
+
+              <div className="form-field">
+
+                <label>
+                  Nomor Telepon
+                  <span>*</span>
+                </label>
+
+                <input
+                  type="tel"
+                  name="phone"
+                  value={
+                    form.phone
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  placeholder="Masukkan nomor telepon"
                 />
 
               </div>

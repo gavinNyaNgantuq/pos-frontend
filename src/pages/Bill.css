@@ -1,6 +1,6 @@
 .bill-page {
   min-height: 100vh;
-  background: #f3f4f6;
+  background: var(--surface-2);
   padding: 30px 20px;
   box-sizing: border-box;
 }
@@ -11,8 +11,8 @@
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
-  background: #ffffff;
-  color: #111111;
+  background: var(--surface);
+  color: var(--text);
   font-family: Arial, sans-serif;
   font-size: 12px;
 }
@@ -55,7 +55,7 @@
   margin: 12px 0;
   overflow: hidden;
   white-space: nowrap;
-  color: #333333;
+  color: var(--text);
 }
 
 /* INFO */
@@ -73,7 +73,7 @@
 }
 
 .bill-info-row span:first-child {
-  color: #555555;
+  color: var(--text-2);
 }
 
 /* PRODUCTS */
@@ -103,7 +103,7 @@
 }
 
 .bill-product-detail span {
-  color: #555555;
+  color: var(--text-2);
 }
 
 .bill-empty {
@@ -127,7 +127,7 @@
 }
 
 .bill-summary-row span:first-child {
-  color: #555555;
+  color: var(--text-2);
 }
 
 .bill-total-row {
@@ -136,7 +136,7 @@
   gap: 10px;
   margin-top: 5px;
   padding-top: 8px;
-  border-top: 1px solid #111111;
+  border-top: 1px solid var(--text);
   font-size: 14px;
 }
 
@@ -180,18 +180,18 @@
 }
 
 .bill-back-button {
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #374151;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-2);
 }
 
 .bill-back-button:hover {
-  background: #f9fafb;
+  background: var(--surface-2);
 }
 
 .bill-print-button {
   border: none;
-  background: #111827;
+  background: var(--ink);
   color: #ffffff;
 }
 
@@ -212,7 +212,7 @@
     width: 80mm;
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: var(--surface);
   }
 
   body {
@@ -224,7 +224,7 @@
     min-height: 0;
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: var(--surface);
   }
 
   .bill {
@@ -233,7 +233,7 @@
     margin: 0;
     padding: 5mm;
     box-sizing: border-box;
-    background: #ffffff;
+    background: var(--surface);
     border-radius: 0;
     box-shadow: none;
   }

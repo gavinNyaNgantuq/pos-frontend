@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Payment.css";
+import Footer from "../components/Footer";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Product {
   id: number;
@@ -38,6 +40,16 @@ function Payment({
   const [discountRate, setDiscountRate] =
     useState(0);
 
+  const [paymentRef, setPaymentRef] =
+    useState("");
+
+  const [promoCode, setPromoCode] =
+    useState("");
+
+  const [shiftId, setShiftId] = useState<
+    number | null
+  >(null);
+
   const [loading, setLoading] =
     useState(false);
 
@@ -59,6 +71,31 @@ function Payment({
 
   const canManageDiscount =
     user?.role === "admin";
+
+  useEffect(() => {
+    const fetchShiftStatus = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/shifts/status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok && data?.data?.id) {
+          setShiftId(Number(data.data.id));
+        }
+      } catch {
+        // shift opsional — kasir tetap bisa bayar
+      }
+    };
+
+    fetchShiftStatus();
+  }, []);
 
   const formatRupiah = (
     value: number
@@ -124,6 +161,16 @@ function Payment({
       return;
     }
 
+    if (
+      paymentMethod !== "cash" &&
+      paymentRef.trim() === ""
+    ) {
+      setError(
+        "Nomor referensi wajib diisi untuk pembayaran non-tunai."
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -161,6 +208,18 @@ function Payment({
 
             payment_method:
               paymentMethod,
+
+            payment_ref:
+              paymentMethod === "cash"
+                ? null
+                : paymentRef.trim() || null,
+
+            promotion_code:
+              promoCode.trim() === ""
+                ? null
+                : promoCode.trim().toUpperCase(),
+
+            shift_id: shiftId,
           }),
         }
       );
@@ -225,6 +284,8 @@ function Payment({
               Pembayaran
             </h1>
           </div>
+
+          <ThemeToggle className="payment-theme" />
         </div>
 
         <div className="payment-content">
@@ -342,6 +403,72 @@ function Payment({
                 Transfer
               </button>
 
+              <button
+                type="button"
+                className={
+                  paymentMethod === "debit"
+                    ? "payment-method active"
+                    : "payment-method"
+                }
+                onClick={() =>
+                  setPaymentMethod(
+                    "debit"
+                  )
+                }
+              >
+                Debit
+              </button>
+
+              <button
+                type="button"
+                className={
+                  paymentMethod === "credit"
+                    ? "payment-method active"
+                    : "payment-method"
+                }
+                onClick={() =>
+                  setPaymentMethod(
+                    "credit"
+                  )
+                }
+              >
+                Kredit
+              </button>
+
+            </div>
+
+            {paymentMethod !== "cash" && (
+              <div className="payment-field">
+                <label>
+                  Nomor Referensi
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="No. referensi transfer/debit/kredit"
+                  value={paymentRef}
+                  onChange={(e) =>
+                    setPaymentRef(e.target.value)
+                  }
+                  disabled={loading}
+                />
+              </div>
+            )}
+
+            <div className="payment-field">
+              <label>
+                Kode Promo (opsional)
+              </label>
+
+              <input
+                type="text"
+                placeholder="Contoh: HEMAT10"
+                value={promoCode}
+                onChange={(e) =>
+                  setPromoCode(e.target.value)
+                }
+                disabled={loading}
+              />
             </div>
 
             <div className="payment-field">
@@ -494,6 +621,8 @@ function Payment({
         </div>
 
       </div>
+
+      <Footer />
     </div>
   );
 }
